@@ -1,0 +1,18 @@
+FROM node:14.18.0
+
+WORKDIR /app
+
+COPY package.json ./
+
+COPY src/index.ts ./src/index.ts
+
+RUN npm install
+
+RUN npx tsc src/index.ts
+
+RUN useradd -r dockeruser
+USER dockeruser
+
+EXPOSE 8080
+
+CMD ["npm","run","start"]  

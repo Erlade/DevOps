@@ -1,0 +1,17 @@
+# stage 1
+FROM node:14.18.0 as builder
+WORKDIR /app
+COPY package.json ./
+COPY src/index.ts ./src/index.ts
+RUN npm install
+RUN npx tsc src/index.ts
+CMD ["npm","run","start"] 
+
+# stage 2
+FROM node:14.18.0
+WORKDIR /app
+COPY --from=builder app/node_modules ./node_modules
+COPY --from=builder app/src/index.js ./src
+RUN useradd -r dockeruser
+USER dockeruser
+EXPOSE 8080
