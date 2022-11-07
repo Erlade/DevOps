@@ -1,0 +1,7 @@
+# General MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# TP
+node_modules
