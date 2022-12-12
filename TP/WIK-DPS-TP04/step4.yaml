@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tp-step4
+spec:
+  selector:
+    step: "4"
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tp-step4
+  namespace: default
+  labels:
+    step: "4"
+spec:
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+  selector:
+    matchLabels:
+      step: "4"
+  template:
+    metadata:
+      labels:
+       step: "4"
+    spec:
+      containers:
+        - name: tp-step4
+          image: registry.cluster.wik.cloud/public/echo
+          ports:
+          - containerPort: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tp-step4
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host : tp-ingress.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tp-step4
+            port:
+              number: 8080
